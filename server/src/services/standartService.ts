@@ -20,18 +20,10 @@ class StandartService {
     }
 
     async update(data: Optional<any, string>) {
-        const { id } = data
-        if (!id) {
-            return new Error('Id must be specified')
-        }
-
-        const instance = await this.model.findByPk(id)
+        const instance = await this.model.findByPk(data.id)
         if (!instance) {
-            return new Error(
-                `Instance with id ${id} doesn't exist`
-            )
+            return null
         }
-
         return await instance.update(data)
     }
 

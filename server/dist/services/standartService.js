@@ -30,13 +30,9 @@ class StandartService {
     }
     update(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = data;
-            if (!id) {
-                return new Error('Id must be specified');
-            }
-            const instance = yield this.model.findByPk(id);
+            const instance = yield this.model.findByPk(data.id);
             if (!instance) {
-                return new Error(`Instance with id ${id} doesn't exist`);
+                return null;
             }
             return yield instance.update(data);
         });

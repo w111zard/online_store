@@ -8,19 +8,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-class UserController {
-    register() {
+const standartService_1 = __importDefault(require("./standartService"));
+const models_1 = require("../models");
+class ProductService extends standartService_1.default {
+    constructor() {
+        super(models_1.Product);
+    }
+    getOneEager(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            return yield models_1.Product.findByPk(id, {
+                include: [
+                    models_1.Brand,
+                    models_1.Type
+                ]
+            });
         });
     }
-    login() {
+    getAllEager() {
         return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    check() {
-        return __awaiter(this, void 0, void 0, function* () {
+            return yield models_1.Product.findAll({
+                include: [
+                    models_1.Brand,
+                    models_1.Type
+                ]
+            });
         });
     }
 }
-exports.default = new UserController();
+exports.default = new ProductService();

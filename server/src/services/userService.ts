@@ -1,10 +1,7 @@
 import { User } from "../models";
-import StandartService from "./standartService";
 
-class UserService extends StandartService {
-    constructor() {
-        super(User)
-    }
+class UserService {
+
 }
 
 export default new UserService()

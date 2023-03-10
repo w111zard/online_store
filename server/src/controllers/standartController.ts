@@ -9,12 +9,12 @@ class StandartController {
         this.service = service
     }
 
-    async create(req: Request, res: Response) {
+    async create(req: Request, res: Response, next: NextFunction) {
         const instance = await this.service.create(req.body)
         res.send(instance.toJSON())
     }
 
-    async getAll(req: Request, res: Response) {
+    async getAll(req: Request, res: Response, next: NextFunction) {
         const instances = await this.service.getAll()
         res.send(instances)
     }
@@ -25,11 +25,17 @@ class StandartController {
             next(ErrorHandler.badRequest('id must be specified'))
         }
         const instance = await this.service.getOne(Number(id))
+        if (!instance) {
+            return res.send([])
+        }
         res.send(instance.toJSON())
     }
 
-    async update(req: Request, res: Response) {
+    async update(req: Request, res: Response, next: NextFunction) {
         const instance = await this.service.update(req.body)
+        if (!instance) {
+            return next(ErrorHandler.badRequest(`Entry with id ${req.body.id} doesn't exist`))
+        }
         res.send(instance.toJSON())
     }
 
@@ -39,6 +45,8 @@ class StandartController {
             return next(ErrorHandler.badRequest('Id must be specified'))
         }
         const affectedRowsNumber = await this.service.delete(Number(id))
-        res.send({ affectedRows: affectedRowsNumber })
+        res.send({ affectedRows: affectedRowsNumber }) 
     }
 }
+
+export default StandartController
