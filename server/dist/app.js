@@ -14,12 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const process_1 = require("process");
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
+require('express-async-errors');
 const connection_1 = __importDefault(require("./utils/connection"));
 const routes_1 = __importDefault(require("./routes"));
 const errorMiddleware_1 = __importDefault(require("./middlewares/errorMiddleware"));
 const models_1 = require("./models");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use((0, express_fileupload_1.default)({}));
 app.use('/api', routes_1.default);
 app.use(errorMiddleware_1.default);
 const startDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,14 +43,27 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Connected to the database successfully!');
     startServer();
     console.log('Server has been started successfully!');
-    const type = yield models_1.Type.create({ name: 'smartphone' });
-    const brand = yield models_1.Brand.create({ name: 'Samsung' });
-    const product = yield models_1.Product.create({
-        name: 'Galaxy S20',
-        price: 1990.90,
-        image: 'samsung.png',
-        typeId: 1,
-        brandId: 1
-    });
+    yield models_1.User.create({
+        email: 'admin',
+        password: '1234',
+        roles: [
+            { name: 'admin' }
+        ]
+    }, { include: models_1.Role });
+    yield models_1.User.create({
+        email: 'user',
+        password: '1234',
+        roles: [
+            { name: 'user' }
+        ]
+    }, { include: models_1.Role });
+    yield models_1.User.create({
+        email: 'user_admin',
+        password: '1234',
+        roles: [
+            { name: 'user' },
+            { name: 'admin' }
+        ]
+    }, { include: models_1.Role });
 });
 exports.default = start;

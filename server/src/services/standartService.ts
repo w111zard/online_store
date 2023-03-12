@@ -1,4 +1,4 @@
-import { InstanceError, Model, ModelCtor, ModelStatic, Optional } from "sequelize";
+import { InstanceError, Model, ModelStatic, Optional } from "sequelize";
 
 class StandartService {
     model: ModelStatic<any>

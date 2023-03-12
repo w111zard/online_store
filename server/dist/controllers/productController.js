@@ -15,23 +15,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const brandService_1 = __importDefault(require("../services/brandService"));
 const productService_1 = __importDefault(require("../services/productService"));
 const typeService_1 = __importDefault(require("../services/typeService"));
-const errorHandler_1 = __importDefault(require("../utils/errorHandler"));
+const apiError_1 = __importDefault(require("../utils/apiError"));
 const standartController_1 = __importDefault(require("./standartController"));
+const fileHandler_1 = __importDefault(require("../utils/fileHandler"));
 class ProductController extends standartController_1.default {
     constructor() {
         super(productService_1.default);
     }
+    // async create(req: IRequestBody<Omit<IProduct, 'id'>>, res: Response, next: NextFunction) {
     create(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             // checking brand exists
             const foundBrand = yield brandService_1.default.getOne(req.body.brandId);
             if (!foundBrand) {
-                return next(errorHandler_1.default.badRequest(`brand with id ${req.body.brandId} doesn't exist`));
+                throw apiError_1.default.badRequest(`brand with id ${req.body.brandId} doesn't exist`);
             }
             // checking type exists
             const foundType = yield typeService_1.default.getOne(req.body.typeId);
             if (!foundType) {
-                return next(errorHandler_1.default.badRequest(`type with id ${req.body.typeId} doesn't exist`));
+                throw apiError_1.default.badRequest(`type with id ${req.body.typeId} doesn't exist`);
+            }
+            // saving image
+            const { image } = req.files;
+            if (image) {
+                const fileName = fileHandler_1.default.save(image);
+                req.body.image = fileName;
             }
             const newProduct = yield productService_1.default.create(req.body);
             res.send(newProduct.toJSON());

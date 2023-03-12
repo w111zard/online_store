@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import StandartService from "../services/standartService";
-import ErrorHandler from "../utils/errorHandler";
+import ApiError from "../utils/apiError";
 
 class StandartController {
     service: StandartService 
@@ -22,7 +22,7 @@ class StandartController {
     async getOne(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params
         if (!id) {
-            next(ErrorHandler.badRequest('id must be specified'))
+            throw ApiError.badRequest('id must be specified')
         }
         const instance = await this.service.getOne(Number(id))
         if (!instance) {
@@ -34,7 +34,7 @@ class StandartController {
     async update(req: Request, res: Response, next: NextFunction) {
         const instance = await this.service.update(req.body)
         if (!instance) {
-            return next(ErrorHandler.badRequest(`Entry with id ${req.body.id} doesn't exist`))
+            throw ApiError.badRequest(`Entry with id ${req.body.id} doesn't exist`)
         }
         res.send(instance.toJSON())
     }
@@ -42,7 +42,7 @@ class StandartController {
     async delete(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params
         if (!id) {
-            return next(ErrorHandler.badRequest('Id must be specified'))
+            throw ApiError.badRequest('Id must be specified')
         }
         const affectedRowsNumber = await this.service.delete(Number(id))
         res.send({ affectedRows: affectedRowsNumber }) 

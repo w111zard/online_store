@@ -1,17 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import ErrorHandler from "../utils/errorHandler";
+import ApiError from "../utils/apiError";
 
 export default 
 (
-    err: Error | ErrorHandler, 
+    error: Error | ApiError, 
     req: Request, 
     res: Response, 
     next: NextFunction 
 ) => {
-    console.log('in error')
-    if (err instanceof ErrorHandler) {
-        return res.status(err.status)
-            .json( { message: err.message } )
+    console.log(error)
+    if (error instanceof ApiError) {
+        return res.status(error.status)
+            .json( { message: error.message } )
     }
     return res.status(500)
         .json( { message: 'Unexpected error' } )

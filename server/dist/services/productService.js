@@ -18,12 +18,18 @@ class ProductService extends standartService_1.default {
     constructor() {
         super(models_1.Product);
     }
+    create(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.model.create(data, { include: models_1.ProductInfo });
+        });
+    }
     getOneEager(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield models_1.Product.findByPk(id, {
                 include: [
                     models_1.Brand,
-                    models_1.Type
+                    models_1.Type,
+                    models_1.ProductInfo
                 ]
             });
         });
@@ -33,7 +39,8 @@ class ProductService extends standartService_1.default {
             return yield models_1.Product.findAll({
                 include: [
                     models_1.Brand,
-                    models_1.Type
+                    models_1.Type,
+                    models_1.ProductInfo
                 ]
             });
         });

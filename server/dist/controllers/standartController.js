@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const errorHandler_1 = __importDefault(require("../utils/errorHandler"));
+const apiError_1 = __importDefault(require("../utils/apiError"));
 class StandartController {
     constructor(service) {
         this.service = service;
@@ -33,7 +33,7 @@ class StandartController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             if (!id) {
-                next(errorHandler_1.default.badRequest('id must be specified'));
+                throw apiError_1.default.badRequest('id must be specified');
             }
             const instance = yield this.service.getOne(Number(id));
             if (!instance) {
@@ -46,7 +46,7 @@ class StandartController {
         return __awaiter(this, void 0, void 0, function* () {
             const instance = yield this.service.update(req.body);
             if (!instance) {
-                return next(errorHandler_1.default.badRequest(`Entry with id ${req.body.id} doesn't exist`));
+                throw apiError_1.default.badRequest(`Entry with id ${req.body.id} doesn't exist`);
             }
             res.send(instance.toJSON());
         });
@@ -55,7 +55,7 @@ class StandartController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             if (!id) {
-                return next(errorHandler_1.default.badRequest('Id must be specified'));
+                throw apiError_1.default.badRequest('Id must be specified');
             }
             const affectedRowsNumber = yield this.service.delete(Number(id));
             res.send({ affectedRows: affectedRowsNumber });

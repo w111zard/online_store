@@ -13,7 +13,16 @@ const User = connection.define('user', {
     },
     password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false  
+    }
+}, {
+    defaultScope: {
+        attributes: { exclude: ['password'] }
+    },
+    scopes: {
+        withPassword: {
+            attributes: ['id', 'email', 'password']
+        }
     }
 })
 
@@ -27,7 +36,7 @@ const Role = connection.define('role', {
         type: DataTypes.STRING,
         allowNull: false
     }
-})
+}, { timestamps: false })
 
 const Product = connection.define('product', {
     id: {
@@ -45,8 +54,30 @@ const Product = connection.define('product', {
     },
     image: {
         type: DataTypes.STRING,
+        allowNull: true
+    }
+})
+
+const ProductInfo = connection.define('product_info', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    description: {
+        type: DataTypes.STRING,
         allowNull: false
     }
+}, { 
+    timestamps: false,
+    indexes: [{
+        unique: true,
+        fields: ['productId', 'title']
+    }]
 })
 
 const Type = connection.define('type', {
@@ -59,7 +90,7 @@ const Type = connection.define('type', {
         type: DataTypes.STRING,
         allowNull: false
     },
-})
+}, { timestamps: false })
 
 const Brand = connection.define('brand', {
     id: {
@@ -71,10 +102,13 @@ const Brand = connection.define('brand', {
         type: DataTypes.STRING,
         allowNull: false
     },
-}) 
+}, { timestamps: false }) 
 
 Role.belongsToMany(User, { through: 'user_role' })
 User.belongsToMany(Role, { through: 'user_role' })
+
+Product.hasMany(ProductInfo)
+ProductInfo.belongsTo(Product) 
 
 Type.hasMany(Product)
 Product.belongsTo(Type)
@@ -87,5 +121,6 @@ export {
     Role,
     Product,
     Brand,
-    Type
+    Type,
+    ProductInfo
 }

@@ -1,16 +1,22 @@
+import { Optional } from "sequelize";
 import StandartService from "./standartService";
-import { Product, Brand, Type } from "../models";
+import { Product, Brand, Type, ProductInfo } from "../models";
 
 class ProductService extends StandartService {
     constructor() {
         super(Product)
     }
 
+    async create(data: Optional<any, string>) {
+        return await this.model.create(data, { include: ProductInfo })
+    }
+
     async getOneEager(id: number) {
         return await Product.findByPk(id, {
             include: [
                 Brand,
-                Type
+                Type,
+                ProductInfo
             ]
         })
     }
@@ -19,7 +25,8 @@ class ProductService extends StandartService {
         return await Product.findAll({
             include: [
                 Brand,
-                Type
+                Type,
+                ProductInfo
             ]
         })
     }

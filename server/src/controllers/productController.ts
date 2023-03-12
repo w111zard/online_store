@@ -1,28 +1,36 @@
 import { NextFunction, Request, Response } from 'express';
-import { IRequestBody } from '../interfaces/common';
-import { IProduct } from '../interfaces/models';
 import brandService from '../services/brandService';
 import productService from "../services/productService";
 import typeService from '../services/typeService';
-import ErrorHandler from '../utils/errorHandler';
+import ApiError from '../utils/apiError';
 import StandartController from "./standartController";
+import path from 'path';
+import fileHandler from '../utils/fileHandler';
 
 class ProductController extends StandartController{
     constructor() {
         super(productService)
     }
 
-    async create(req: IRequestBody<Omit<IProduct, 'id'>>, res: Response, next: NextFunction) {
+    // async create(req: IRequestBody<Omit<IProduct, 'id'>>, res: Response, next: NextFunction) {
+    async create(req: Request, res: Response, next: NextFunction) {
         // checking brand exists
         const foundBrand = await brandService.getOne(req.body.brandId)
         if (!foundBrand) {
-            return next(ErrorHandler.badRequest(`brand with id ${req.body.brandId} doesn't exist`))
+            throw ApiError.badRequest(`brand with id ${req.body.brandId} doesn't exist`)
         }
         
         // checking type exists
         const foundType = await typeService.getOne(req.body.typeId)
         if (!foundType) {
-            return next(ErrorHandler.badRequest(`type with id ${req.body.typeId} doesn't exist`))
+            throw ApiError.badRequest(`type with id ${req.body.typeId} doesn't exist`)
+        }
+
+        // saving image
+        const { image } : any = req.files
+        if (image) {
+            const fileName = fileHandler.save(image)
+            req.body.image = fileName
         }
 
         const newProduct = await productService.create(req.body)
